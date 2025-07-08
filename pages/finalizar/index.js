@@ -1,4 +1,3 @@
-
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
@@ -23,7 +22,8 @@ export default function Finalizar() {
     });
     const data = await res.json();
     if (data && data.init_point) {
-      router.push(`/pix?qr=${encodeURIComponent(data.init_point)}`);
+      // ✅ AQUI foi feita a alteração
+      router.push(`/pix?qr=${encodeURIComponent(data.init_point)}&valor=${valor}`);
     } else {
       alert("Erro ao gerar QR Code.");
     }

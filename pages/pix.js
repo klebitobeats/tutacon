@@ -2,18 +2,24 @@ import React, { useEffect, useState } from 'react';
 
 export default function Pix() {
   const [qr, setQr] = useState(null);
+  const [value, setValue] = useState(null); // Novo estado para o valor
+  const [receiverName, setReceiverName] = useState(null); // Novo estado para o nome do recebedor
   const [isLoading, setIsLoading] = useState(true);
   const [copied, setCopied] = useState(false); // Novo estado para feedback de cópia
 
   useEffect(() => {
-    // Obter o parâmetro 'qr' diretamente da URL do navegador
+    // Obter os parâmetros 'qr', 'valor' e 'receiverName' diretamente da URL do navegador
     const params = new URLSearchParams(window.location.search);
     const qrCode = params.get('qr');
+    const paymentValue = params.get('valor');
+    const name = params.get('receiverName');
+
     setQr(qrCode);
+    setValue(paymentValue);
+    setReceiverName(name);
     setIsLoading(false);
   }, []);
 
-  // Função para copiar o texto para a área de transferência
   const copyToClipboard = () => {
     if (qr) {
       const el = document.createElement('textarea');
@@ -22,9 +28,9 @@ export default function Pix() {
       el.select();
       document.execCommand('copy');
       document.body.removeChild(el);
-      setCopied(true); // Define o estado para mostrar a mensagem de copiado
+      setCopied(true);
       setTimeout(() => {
-        setCopied(false); // Esconde a mensagem após 2 segundos
+        setCopied(false);
       }, 2000);
     }
   };
@@ -33,7 +39,7 @@ export default function Pix() {
     <div className="min-h-screen bg-gradient-to-br from-purple-600 to-indigo-800 flex items-center justify-center p-4 font-inter">
       <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center transform transition-all duration-500 hover:scale-105">
         <h1 className="text-4xl font-extrabold text-gray-900 mb-6 tracking-tight">
-          Pagamento via Pix
+          Pague via Pix
         </h1>
 
         {isLoading ? (
@@ -43,6 +49,16 @@ export default function Pix() {
           </div>
         ) : qr ? (
           <>
+            {receiverName && (
+              <p className="text-xl font-semibold text-gray-800 mb-2">
+                Para: {receiverName}
+              </p>
+            )}
+            {value && (
+              <p className="text-2xl font-bold text-purple-700 mb-4">
+                Valor: R$ {parseFloat(value).toFixed(2).replace('.', ',')}
+              </p>
+            )}
             <p className="text-lg text-gray-700 mb-4">
               Escaneie o QR Code abaixo para realizar o pagamento:
             </p>
@@ -52,23 +68,17 @@ export default function Pix() {
                 alt="QR Code Pix"
                 className="rounded-lg shadow-lg border-4 border-purple-300 transition-all duration-300 hover:shadow-xl"
                 onError={(e) => {
-                  e.target.onerror = null; // Evita loop infinito
-                  e.target.src = 'https://placehold.co/300x300/E0BBE4/FFFFFF?text=QR+Code+Indisponível'; // Imagem de fallback
+                  e.target.onerror = null;
+                  e.target.src = 'https://placehold.co/300x300/E0BBE4/FFFFFF?text=QR+Code+Indisponível';
                 }}
               />
             </div>
-            <div className="bg-gray-100 p-4 rounded-lg break-all text-gray-800 text-sm font-mono select-all border border-gray-200 cursor-pointer" onClick={copyToClipboard}>
-              {qr}
-            </div>
-            <p className="text-sm text-gray-500 mt-4">
-              Clique no código acima para copiá-lo.
-            </p>
 
             <button
               onClick={copyToClipboard}
               className="mt-6 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50"
             >
-              Copiar Código Pix
+              Copiar e Colar Código Pix
             </button>
 
             {copied && (
