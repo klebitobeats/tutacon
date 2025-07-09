@@ -7,14 +7,15 @@
     "start": "next start"
   },
   "dependencies": {
+    "firebase": "^11.10.0",
+    "mercadopago": "^2.8.0",
     "next": "latest",
     "react": "latest",
-    "react-dom": "latest",
-    "mercadopago": "^2.8.0"
+    "react-dom": "latest"
   },
   "devDependencies": {
-    "tailwindcss": "^3.3.2",
+    "autoprefixer": "^10.4.13",
     "postcss": "^8.4.21",
-    "autoprefixer": "^10.4.13"
+    "tailwindcss": "^3.3.2"
   }
 }

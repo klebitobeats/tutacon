@@ -1,3 +1,6 @@
+import { database } from '../firebase';
+import { ref, onValue } from 'firebase/database';
+
 import React, { useEffect, useState } from 'react';
 
 export default function Pix() {
@@ -8,6 +11,18 @@ export default function Pix() {
   const [copied, setCopied] = useState(false); // Novo estado para feedback de cópia
 
   useEffect(() => {
+
+const pedidoId = new URLSearchParams(window.location.search).get("id");
+if (pedidoId) {
+  const pedidoRef = ref(database, `pedidos/${pedidoId}`);
+  onValue(pedidoRef, (snapshot) => {
+    const pedido = snapshot.val();
+    if (pedido?.status === "pago") {
+      window.location.href = "/obrigado";
+    }
+  });
+}
+
     // Obter os parâmetros 'qr', 'valor' e 'receiverName' diretamente da URL do navegador
     const params = new URLSearchParams(window.location.search);
     const qrCode = params.get('qr');

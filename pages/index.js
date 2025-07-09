@@ -247,7 +247,7 @@ export default function Home() {
   };
 
   const produtos = [
-    { nome: 'Açaí 300ml', descricao: 'Delicioso açaí na tigela com frutas', valor: 10, imageUrl: 'https://placehold.co/300x300/A78BFA/FFFFFF?text=A%C3%A7a%C3%AD+300ml', inclui: ['granola', 'paçoca', 'calda de chocolate'] },
+    { nome: 'Açaí 300ml', descricao: 'Delicioso açaí na tigela com frutas', valor: 0.03, imageUrl: 'https://placehold.co/300x300/A78BFA/FFFFFF?text=A%C3%A7a%C3%AD+300ml', inclui: ['granola', 'paçoca', 'calda de chocolate'] },
     { nome: 'Açaí 500ml', descricao: 'Açaí completo com banana e granola', valor: 15, imageUrl: 'https://placehold.co/300x300/8B5CF6/FFFFFF?text=A%C3%A7a%C3%AD+500ml', inclui: ['granola', 'paçoca', 'calda de chocolate', 'banana', 'leite ninho', 'chocoball'] },
     { nome: 'Copo da Felicidade', descricao: 'Creme de ninho, morango e chocolate', valor: 22.50, imageUrl: 'https://placehold.co/300x300/6D28D9/FFFFFF?text=Copo+Felicidade', inclui: ['creme de ninho', 'morango', 'chocolate'] },
     { nome: 'Milkshake de Ovomaltine', descricao: 'Cremoso e refrescante', valor: 18.00, imageUrl: 'https://placehold.co/300x300/5B21B6/FFFFFF?text=Milkshake', inclui: ['ovomaltine', 'leite', 'sorvete'] },
