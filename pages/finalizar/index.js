@@ -353,3 +353,4 @@ export default function Finalizar() {
     </div>
   );
 }
+
