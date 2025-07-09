@@ -1,7 +1,9 @@
-
+// pages/api/pix.js
 import { MercadoPagoConfig, Payment } from 'mercadopago';
 
-const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
+const client = new MercadoPagoConfig({
+  accessToken: process.env.MP_ACCESS_TOKEN,
+});
 const payment = new Payment(client);
 
 export default async function handler(req, res) {
@@ -10,30 +12,34 @@ export default async function handler(req, res) {
   }
 
   try {
-    const valor = parseFloat(req.body.valor);
+    const { valor, email, nome, sobrenome, cpf } = req.body;
 
-    if (!valor || valor <= 0) {
+    if (!valor || isNaN(valor) || parseFloat(valor) <= 0) {
       return res.status(400).json({ erro: 'Valor inválido' });
     }
 
     const response = await payment.create({
       body: {
-        transaction_amount: valor,
+        transaction_amount: parseFloat(valor),
         description: 'Pagamento via Pix',
         payment_method_id: 'pix',
         payer: {
-          email: req.body.email || 'cliente@exemplo.com',
-          first_name: req.body.nome || 'Nome',
-          last_name: req.body.sobrenome || 'Sobrenome',
+          email: email || 'cliente@exemplo.com',
+          first_name: nome || 'Nome',
+          last_name: sobrenome || 'Sobrenome',
           identification: {
             type: 'CPF',
-            number: req.body.cpf || '00000000000'
-          }
-        }
-      }
+            number: cpf || '00000000000',
+          },
+        },
+      },
     });
 
-    return res.status(200).json({ init_point: response.point_of_interaction.transaction_data.qr_code });
+    return res.status(200).json({
+      qr_code: response.point_of_interaction.transaction_data.qr_code,
+      qr_code_base64: response.point_of_interaction.transaction_data.qr_code_base64,
+      status: response.status,
+    });
   } catch (error) {
     console.error('Erro ao criar pagamento:', error);
     return res.status(500).json({ erro: 'Erro ao criar pagamento' });
