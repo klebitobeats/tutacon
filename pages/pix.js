@@ -1,41 +1,45 @@
+// pages/pix.js
+import React, { useEffect, useState } from 'react';
 
-import { MercadoPagoConfig, Payment } from 'mercadopago';
+export default function Pix() {
+  const [qr, setQr] = useState(null);
+  const [value, setValue] = useState(null);
+  const [receiverName, setReceiverName] = useState(null);
+  const [isBrowser, setIsBrowser] = useState(false);
 
-const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
-const payment = new Payment(client);
-
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ erro: 'Método não permitido' });
-  }
-
-  try {
-    const valor = parseFloat(req.body.valor);
-
-    if (!valor || valor <= 0) {
-      return res.status(400).json({ erro: 'Valor inválido' });
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      setQr(params.get('qr'));
+      setValue(params.get('valor'));
+      setReceiverName(params.get('receiverName'));
+      setIsBrowser(true);
     }
+  }, []);
 
-    const response = await payment.create({
-      body: {
-        transaction_amount: valor,
-        description: 'Pagamento via Pix',
-        payment_method_id: 'pix',
-        payer: {
-          email: req.body.email || 'cliente@exemplo.com',
-          first_name: req.body.nome || 'Nome',
-          last_name: req.body.sobrenome || 'Sobrenome',
-          identification: {
-            type: 'CPF',
-            number: req.body.cpf || '00000000000'
-          }
-        }
-      }
-    });
-
-    return res.status(200).json({ init_point: response.point_of_interaction.transaction_data.qr_code });
-  } catch (error) {
-    console.error('Erro ao criar pagamento:', error);
-    return res.status(500).json({ erro: 'Erro ao criar pagamento' });
+  if (!isBrowser) {
+    return <div>Carregando...</div>;
   }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="bg-white shadow-md rounded p-6 text-center">
+        <h1 className="text-2xl font-bold mb-4">Pagamento via Pix</h1>
+        {receiverName && <p className="mb-2">Para: {receiverName}</p>}
+        {value && <p className="mb-4">Valor: R$ {parseFloat(value).toFixed(2).replace('.', ',')}</p>}
+        {qr ? (
+          <>
+            <img
+              src={`https://api.qrserver.com/v1/create-qr-code/?data=${qr}&size=300x300`}
+              alt="QR Code Pix"
+              className="mx-auto mb-4"
+            />
+            <p className="text-sm text-gray-500 break-all">{qr}</p>
+          </>
+        ) : (
+          <p className="text-red-500">QR Code não encontrado.</p>
+        )}
+      </div>
+    </div>
+  );
 }
